@@ -1,6 +1,9 @@
 # Package for cluster validity
 install.packages("clValid")
+install.packages("plotrix")
+
 library(clValid)
+library(plotrix)
 
 # Load the Iris dataset
 data(iris)
@@ -35,15 +38,17 @@ plot(newiris[,c("Sepal.Length", "Sepal.Width")], col = kc$cluster)
 points(kc$centers[,c("Sepal.Length", "Sepal.Width")], col = 1:5, pch = 8, cex=2)
 
 # Evaluating the cluster validity measures
-newiris.clValid <- clValid(newiris, 2:10, clMethods = "kmeans", validation = c("internal", "stability"))
+newiris.clValid <- clValid(newiris, 2:10, clMethods = "kmeans", 
+                           validation = c("internal", "stability"))
 summary(newiris.clValid)
 
 # Part 2: Hierarchical Clustering -----------------------------------------
 ploan <- read.csv("Personal Loan.csv")
 ploan.x <- ploan[,-c(1,5,10)]
+ploan.x.scaled <- scale(ploan.x, center = TRUE, scale = TRUE)
 
 # Compute the similarity using the spearman coefficient
-cor.Mat <- cor(t(ploan.x), method = "spearman")
+cor.Mat <- cor(t(ploan.x.scaled), method = "spearman")
 dist.ploan <- as.dist(1-cor.Mat)
 
 # Perform hierarchical clustering
@@ -55,30 +60,37 @@ plot(hr, hang = -1)
 plot(as.dendrogram(hr), edgePar=list(col=3, lwd=4), horiz=T)
 
 # Find the clusters
-mycl <- cutree(hr, k=5)
+mycl <- cutree(hr, k=10)
 mycl
 
 plot(hr)
-rect.hclust(hr, k=5, border="red")
+rect.hclust(hr, k=10, border="red")
 
-# Compare each cluster
-segment.ploan <- cbind(ploan.x, ploanYN = ploan[,10], clusterID = as.factor(mycl))
-segment.summary <- data.frame()
 
-for (i in 1:(dim(segment.ploan)[2]-1)){
-  segment.summary = rbind(segment.summary, 
-                          tapply(segment.ploan[,i], segment.ploan$clusterID, mean))
+# Compare each cluster for HC
+cluster.hc <- data.frame(ploan.x.scaled, ploanYN = ploan[,10], 
+                         clusterID = as.factor(mycl))
+hc.summary <- data.frame()
+
+for (i in 1:(ncol(cluster.hc)-1)){
+  hc.summary = rbind(hc.summary, 
+                     tapply(cluster.hc[,i], cluster.hc$clusterID, mean))
 }
 
-colnames(segment.summary) <- paste("cluster", c(1:5))
-rownames(segment.summary) <- c(colnames(ploan.x), "LoanRatio")
-segment.summary
+colnames(hc.summary) <- paste("cluster", c(1:10))
+rownames(hc.summary) <- c(colnames(ploan.x), "LoanRatio")
+hc.summary
 
 # Radar chart
-segment.summary <- t(segment.summary)
-stars(segment.summary, locations = c(0, 0),
-        radius = TRUE, key.loc = c(0, 0), col.lines = 2:6, 
-        main = "Customer Segmentation", lty = 1, lwd = 2)
+par(mfrow = c(2,5))
+for (i in 1:10){
+  plot.title <- paste("Radar Chart for Cluster", i, sep=" ")
+  radial.plot(hc.summary[,i], labels = rownames(hc.summary), 
+              radial.lim=c(-2,3), rp.type = "p", main = plot.title, 
+              line.col = "red", lwd = 3, show.grid.labels=1)
+}
+dev.off()
+
 
 # Part 3: Self-Organizing Map ---------------------------------------------
 # som package install
