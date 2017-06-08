@@ -42,6 +42,7 @@ ScaledInputData <- scale(InputData, center = TRUE, scale = TRUE)
 head(ScaledInputData)
 
 # Divide the dataset into the training (70%) and Validation (30%) datasets
+set.seed(12345)
 trn_idx <- sample(1:length(Class), round(0.7*length(Class)))
 trnInputs <- ScaledInputData[trn_idx,]
 trnTargets <- Class[trn_idx]
@@ -98,7 +99,7 @@ Cperf
 install.packages("FNN", dependencies = TRUE)
 library(FNN)
 # Concrete strength data
-concrete <- read.csv("concrete.csv")
+concrete <- read.csv("concrete.csv", header = FALSE)
 
 RegX <- concrete[,1:8]
 RegY <- concrete[,9]
@@ -110,12 +111,13 @@ RegX <- scale(RegX, center = TRUE, scale = TRUE)
 RegData <- as.data.frame(cbind(RegX, RegY))
 
 # Split the data into the training/test sets
-trn_idx <- sample(1:1029, round(0.7*1029))
+set.seed(12345)
+trn_idx <- sample(1:1030, round(0.7*1030))
 trn_data <- RegData[trn_idx,]
 test_data <- RegData[-trn_idx,]
 
 # Find the best k using leave-one-out validation
-nk <- c(1:1:10)
+nk <- c(1:10)
 trn.n <- dim(trn_data)[1]
 trn.v <- dim(trn_data)[2]
 
