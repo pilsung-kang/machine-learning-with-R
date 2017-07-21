@@ -1,6 +1,3 @@
-# Working directory 지정
-setwd("C:\\RStudy")
-
 # k-Nearest Neighbor Illustration -----------------------------------------
 install.packages("ElemStatLearn", dependencies = TRUE)
 install.packages("class", dependencies = TRUE)
@@ -93,7 +90,9 @@ Cperf[1,2] <- sqrt((cfmatrix[1,1]/(cfmatrix[1,1]+cfmatrix[1,2]))*(cfmatrix[2,2]/
 Recall <- cfmatrix[2,2]/(cfmatrix[2,1]+cfmatrix[2,2])
 Precision <- cfmatrix[1,1]/(cfmatrix[1,1]+cfmatrix[1,2])
 Cperf[1,3] <- 2*Recall*Precision/(Recall+Precision)
+colnames(Cperf) <- c("ACC", "BCR", "F-1")
 Cperf
+
 
 # k-Nearest Neighbor Learning (Regression) --------------------------------
 install.packages("FNN", dependencies = TRUE)
@@ -144,6 +143,8 @@ for (i in 1:length(nk)){
   
   val.rmse[i,1] <- sqrt(mean(tmp_residual^2))
 }
+
+val.rmse
 
 # find the best k
 best.k <- nk[which.min(val.rmse)]

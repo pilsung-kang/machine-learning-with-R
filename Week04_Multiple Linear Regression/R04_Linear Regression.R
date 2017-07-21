@@ -33,6 +33,7 @@ names(Fuel) <- c("Petrol","Diesel","CNG")
 mlr_data <- cbind(corolla[,-c(id_idx, category_idx)], Fuel)
 
 # Split the data into the training/validation sets
+set.seed(12345)
 trn_idx <- sample(1:nCar, round(0.7*nCar))
 trn_data <- mlr_data[trn_idx,]
 val_data <- mlr_data[-trn_idx,]

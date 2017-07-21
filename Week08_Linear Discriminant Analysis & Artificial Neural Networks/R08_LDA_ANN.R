@@ -31,6 +31,7 @@ ScaledInputData <- scale(InputData, center = TRUE, scale = TRUE)
 head(ScaledInputData)
 
 # Divide the dataset into the training (50%) and test (50%) datasets
+set.seed(12345)
 trn_idx <- sample(1:length(Class), round(0.5*length(Class)))
 trnInputs <- ScaledInputData[trn_idx,]
 trnTargets <- Class[trn_idx]

@@ -13,6 +13,7 @@ library(ROCR)
 ploan.x <- ploan[,-c(1,5,10)]
 ploan.y <- as.data.frame(as.factor(ploan[,10]))
 
+set.seed(12345)
 trn_idx <- sample(1:dim(ploan.y)[1], round(0.7*dim(ploan.y)[1]))
 
 ploan.trn <- cbind(ploan.x[trn_idx,], ploanYN = ploan.y[trn_idx,])

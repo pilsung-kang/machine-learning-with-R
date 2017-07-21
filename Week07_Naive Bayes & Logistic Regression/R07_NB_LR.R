@@ -31,6 +31,7 @@ ploan_target <- as.factor(ploan[,target_idx])
 ploan_data <- data.frame(ploan_input, ploan_target)
 
 # Split the data into the training/validation sets
+set.seed(12345)
 trn_idx <- sample(1:dim(ploan_data)[1], round(0.7*dim(ploan_data)[1]))
 ploan_trn <- ploan_data[trn_idx,]
 ploan_val <- ploan_data[-trn_idx,]
